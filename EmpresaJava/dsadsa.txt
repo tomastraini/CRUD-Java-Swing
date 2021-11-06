@@ -1,0 +1,85 @@
+import java.awt.Color;
+import java.awt.Image;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+
+import javax.swing.BorderFactory;
+import javax.swing.ImageIcon;
+import javax.swing.JFrame;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.border.TitledBorder;
+import javax.swing.table.DefaultTableModel;
+
+public class cargarClientes {
+	
+	
+	public static void main(String[] args) {
+		JFrame frameCargacli = new JFrame();
+		JPanel panelTabla = new JPanel();
+		JPanel panelFondo = new JPanel();
+		
+		try {
+			Class.forName("com.microsoft.sqlserver.jdbc.SQLServerDriver");
+			String conexion = connextion.conexion;
+			Connection conn = DriverManager.getConnection(conexion);
+
+			try (PreparedStatement clie = conn.prepareStatement("select razon_social_cli, telefono_cli, localidad from clientes join localidades on localidades.id_localidad = clientes.id_localidad")) {
+				ResultSet clien = clie.executeQuery();
+				DefaultTableModel model = new DefaultTableModel(new String[]{"Nombre", "Teléfono", "Localidad"}, 0);
+				panelTabla.setBorder(BorderFactory.createTitledBorder( BorderFactory.createEtchedBorder(), "Formulario de carga de clientes", TitledBorder.CENTER, TitledBorder.ABOVE_TOP));
+				String[] header = { "Nombre", "Teléfono", "Localidad" };
+			      JTable table = new JTable(model);
+			      panelTabla.add(new JScrollPane(table));
+			      frameCargacli.setSize(200, 200);
+			      frameCargacli.add(panelTabla);
+			      
+			      frameCargacli.setVisible(true);
+				    
+				while(clien.next())
+				{
+				   
+				    String n = clien.getString("razon_social_cli");
+				    String t = clien.getString("telefono_cli");
+				    String l = clien.getString("localidad");
+				    model.addRow(new Object[]{n, t, l});
+				
+				}
+				
+			        
+		    }
+			
+		}catch(Exception ex){
+			 JOptionPane.showMessageDialog(null, ex);
+		}
+		
+		
+		
+		
+		
+		
+		
+		
+		try {
+			 ImageIcon img = new ImageIcon("./images/icon.png");
+			    Image Image = img.getImage();
+			    frameCargacli.setIconImage(Image);
+			 
+		 } catch (Exception e) {
+			    throw new RuntimeException(e);
+			}
+		
+		
+		
+		frameCargacli.getContentPane().setBackground(Color.lightGray);
+		
+		frameCargacli.setSize(500, 500);
+		
+		frameCargacli.setVisible(true);
+			
+	}
+}
